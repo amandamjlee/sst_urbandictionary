@@ -12,8 +12,7 @@
 
   function setup()
 	{
-
-		createCanvas(window.innerWidth,50);
+    createCanvas(window.innerWidth,50);
 		background(255);
 		fill(0, 0, 0, 255);
     textSize(30);
@@ -24,16 +23,12 @@
 	  myRec.onResult = showResult;
     myRec.start();
 	}
-	// function draw()
-	// {
-	// }
-	function showResult()
+
+function showResult()
 	{
 		if(myRec.resultValue==true) {
 			background(255);
 
-
-			// text(myRec.resultString, width/2, height/2);
 			console.log(myRec.resultString);
       let inputValue = myRec.resultString;
       findmeaning(inputValue);
