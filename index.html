@@ -2,71 +2,10 @@
 <head>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.5/p5.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.5/addons/p5.dom.js"></script>
-	<script src="p5.speech.js"></script>
+
   <script src="jquery-2.2.4.min.js"></script>
 
-	<script>
-	let myRec = new p5.SpeechRec(); // new P5.SpeechRec object
-  myRec.continous =true;
-  myRec.interim = false;
 
-  function setup()
-	{
-    createCanvas(window.innerWidth,50);
-		background(255);
-		fill(0, 0, 0, 255);
-    textSize(30);
-    textAlign(CENTER);
-
-    text("say the word you want to know", width/2, height/2);
-
-	  myRec.onResult = showResult;
-    myRec.start();
-	}
-
-function showResult()
-	{
-		if(myRec.resultValue==true) {
-			background(255);
-
-			console.log(myRec.resultString);
-      let inputValue = myRec.resultString;
-      findmeaning(inputValue);
-		}
-	}
-
-
-function makeHTML(definition){
-  	$('#container').html('');
-    let htmlString = '<h1 class="text">'+''+definition+'</h1>';
-
-    $('#container').append(htmlString);
-}
-
-  function findmeaning(word){
-    var theURL='http://api.urbandictionary.com/v0/define?term='+word+'';
-   	$.ajax({
-   		url: theURL,
-   		type:'GET',
-   		dataType: 'jsonp',
-   		error: function(err){
-   			console.log("We got problems!");
-   			console.log(err);
-   		},
-   		success: function(data){
-  			console.log("WooHoo!");
-  			console.log(data);
-
-        let definition = data.list[0].definition
-        console.log(definition);
-
-       makeHTML(definition);
-
-  		}
-   	});
-
-  }
-</script>
 <style>
 #container{
   width: 900px;
@@ -79,9 +18,6 @@ h1 {
     font-family: sans-serif;
     font-size: 20px;
     text-align: center;
-    /*margin: 0px auto;*/
-    /*position: absolute;*/
-    /*top:400px;*/
 
 
 }
@@ -89,6 +25,89 @@ h1 {
 
 </head>
 <body>
-  <div id="container"></div>
+<div id="container"></div>
+<input id="the-input" placeholder="name" type="text"/>
+<button id="the-button">enter</button>
+
+<script>
+
+// 참고로 이 코드에서는 p5 랑 jquery 가 쓰인거랍니다!
+function setup()
+{
+	createCanvas(window.innerWidth,50);
+	background(255);
+	fill(0, 0, 0, 255);
+	textSize(30);
+	textAlign(CENTER);
+
+
+
+}
+
+
+//버튼 function
+$("#the-button").click(function(){
+	//버튼 input 값의 변수를 정해주고
+	var theInputValue = $('#the-input').val();
+		console.log(theInputValue);
+
+		//그 값을 api불러올 function 으로 넘겨주는거에요
+		findmeaning(theInputValue);
+
+});
+
+//이건 뭔지 기억이 안나요. 근데 그냥 input 버튼 있을때 항상 같이 썼어요.
+$("#the-input").keypress(function(evt){
+	if(evt.which==13){
+		$("#the-button").trigger('click');
+	}
+});
+
+
+//console 에 나오는 것들을 웹브라우저에 display해주는 function
+function makeHTML(definition){
+	//html에 만들어놓은 빈 container 를 선택? 해주는 코드인듯...아마도...
+	$('#container').html('');
+	let htmlString = '<h1 class="text">'+''+definition+'</h1>';
+ //api 로 불러온 거를 container div에 넣어준다는 그런 코드인듯.
+	$('#container').append(htmlString);
+}
+
+
+//api function
+function findmeaning(word){
+
+	//web에다가 http://api.urbandictionary.com/v0/define?term=amanda 쳐보세요
+	//치면 나오는것들이 api 에서 불러오는 json 파일이에요.
+	//저 url 주소에서 마지막 term= 뒤에가 오빠가 검색하는 단어가 붙을 자리에요.
+	//그러니까 밑에 줄처럼 url 을 변수로 만들어줄때 그 마지막 부분을 오빠가 input으로 넣어주는 값으로 설정해주면 오빠가 검색하는 단어가 찾아지는거랍니다.
+	var theURL='http://api.urbandictionary.com/v0/define?term='+word+'';
+	//이건 그냥 ajax로 api 불러오는방법...그냥 복사 붙여넣기해서 쓰세요 항상
+	$.ajax({
+		url: theURL,
+		type:'GET',
+		dataType: 'jsonp',
+		error: function(err){
+			console.log("We got problems!");
+			console.log(err);
+		},
+		success: function(data){
+			console.log("WooHoo!");
+			console.log(data);
+
+ //오빠가 이 전체 api중에 필요한 값이 definition 이니까 그것만 불러오는 코드가 필요하겠죠??
+	//json 파일을 보면 array안에 list가 있고 그안에 definition 이 있답니다.
+	//이 밑에 줄이 불러오는 방법이에요
+			let definition = data.list[0].definition
+			console.log(definition);
+
+//불러온 definition 을 아까 위에 써있었던 브라우저에 디스플레이해주는 그 function 으로 보내주는거에요
+		 makeHTML(definition);
+
+		}
+	});
+
+}
+</script>
 </body>
 </html>
